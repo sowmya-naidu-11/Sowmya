@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IronDepot — Excavator Parts & Components</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #0a0a08;
+      --steel: #1c1c1a;
+      --iron: #2e2e2b;
+      --rust: #c94a00;
+      --amber: #f5a623;
+      --chalk: #f0ede6;
+      --mist: #c8c4bb;
+      --grime: #7a7870;
+      --highlight: #ff5e00;
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --font-mono: 'Roboto Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--chalk);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Custom cursor */
+    .cursor {
+      width: 12px; height: 12px;
+      background: var(--highlight);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      mix-blend-mode: difference;
+      transition: transform 0.15s ease, width 0.2s, height 0.2s;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--highlight);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      transition: all 0.25s ease;
+      opacity: 0.6;
+    }
+    body:hover .cursor { transform: translate(-50%, -50%); }
+
+    /* ─── HEADER ─────────────────────────────────── */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 48px;
+      background: rgba(10,10,8,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(200,196,187,0.08);
+    }
+
+    .logo {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      letter-spacing: 0.04em;
+      color: var(--chalk);
+      text-decoration: none;
+    }
+    .logo span { color: var(--rust); }
+
+    nav { display: flex; gap: 32px; align-items: center; }
+    nav a {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--mist);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--chalk); }
+
+    .header-actions { display: flex; gap: 16px; align-items: center; }
+
+    .btn-icon {
+      background: none; border: none; cursor: none;
+      color: var(--mist); font-size: 1.1rem; padding: 8px;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .btn-icon:hover { color: var(--chalk); }
+    .cart-badge {
+      position: absolute; top: 4px; right: 4px;
+      background: var(--rust); color: #fff;
+      font-size: 0.55rem; font-family: var(--font-mono);
+      border-radius: 50%; width: 15px; height: 15px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .btn-primary {
+      background: var(--rust);
+      color: #fff;
+      border: none;
+      padding: 10px 24px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: none;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { background: var(--highlight); transform: translateY(-1px); }
+
+    /* ─── HERO ─────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding-top: 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(200,196,187,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,196,187,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    .hero-bg-glow {
+      position: absolute;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,74,0,0.12) 0%, transparent 70%);
+      top: 10%; right: 5%;
+      pointer-events: none;
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.08); opacity: 0.7; }
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 60px 80px 80px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-tag {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--rust);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .hero-tag::before {
+      content: '';
+      display: block;
+      width: 30px; height: 1px;
+      background: var(--rust);
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(4.5rem, 9vw, 9rem);
+      line-height: 0.92;
+      letter-spacing: 0.01em;
+      margin-bottom: 28px;
+      color: var(--chalk);
+    }
+    .hero-title .accent { color: var(--rust); display: block; }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--mist);
+      font-weight: 300;
+      max-width: 420px;
+      line-height: 1.65;
+      margin-bottom: 44px;
+    }
+
+    .hero-cta { display: flex; gap: 16px; align-items: center; }
+
+    .btn-outline {
+      border: 1px solid rgba(200,196,187,0.25);
+      background: none;
+      color: var(--mist);
+      padding: 11px 24px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: none;
+      transition: border-color 0.2s, color 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-outline:hover { border-color: var(--chalk); color: var(--chalk); }
+
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+      margin-top: 64px;
+      padding-top: 36px;
+      border-top: 1px solid rgba(200,196,187,0.1);
+    }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      color: var(--chalk);
+      line-height: 1;
+    }
+    .stat-num span { color: var(--rust); }
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--grime);
+      margin-top: 4px;
+    }
+
+    .hero-right {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-visual {
+      width: 100%;
+      height: 100%;
+      background: var(--steel);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* SVG Excavator illustration */
+    .hero-svg-wrap {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-overlay-text {
+      position: absolute;
+      bottom: 40px; left: 40px;
+      font-family: var(--font-display);
+      font-size: 7rem;
+      color: rgba(255,255,255,0.04);
+      line-height: 1;
+      letter-spacing: -0.02em;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .badge-floating {
+      position: absolute;
+      top: 40px; right: 40px;
+      background: var(--rust);
+      padding: 16px 20px;
+      text-align: center;
+      animation: float 3s ease-in-out infinite;
+    }
+    .badge-floating .big { font-family: var(--font-display); font-size: 1.8rem; display: block; }
+    .badge-floating .small { font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    /* ─── TICKER ─────────────────────────────────── */
+    .ticker {
+      background: var(--rust);
+      padding: 12px 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .ticker-inner {
+      display: inline-block;
+      animation: ticker 22s linear infinite;
+    }
+    .ticker-inner span {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.85);
+      margin-right: 60px;
+    }
+    .ticker-inner span::before {
+      content: '⬡ ';
+      opacity: 0.6;
+    }
+
+    @keyframes ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ─── CATEGORIES ─────────────────────────────── */
+    section { padding: 100px 80px; }
+
+    .section-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 56px;
+    }
+
+    .section-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--rust);
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 4vw, 3.8rem);
+      line-height: 1.0;
+      color: var(--chalk);
+    }
+
+    .section-link {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--mist);
+      text-decoration: none;
+      border-bottom: 1px solid var(--grime);
+      padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .section-link:hover { color: var(--chalk); border-color: var(--chalk); }
+
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+    }
+
+    .cat-card {
+      position: relative;
+      aspect-ratio: 3/4;
+      background: var(--steel);
+      overflow: hidden;
+      cursor: none;
+      group: true;
+    }
+
+    .cat-card:first-child {
+      grid-row: span 2;
+      aspect-ratio: unset;
+    }
+
+    .cat-bg {
+      position: absolute; inset: 0;
+      transition: transform 0.5s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 7rem;
+      opacity: 0.12;
+    }
+    .cat-card:hover .cat-bg { transform: scale(1.08); opacity: 0.18; }
+
+    .cat-noise {
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+      pointer-events: none;
+      mix-blend-mode: overlay;
+    }
+
+    .cat-content {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 24px;
+      background: linear-gradient(transparent, rgba(10,10,8,0.88));
+    }
+
+    .cat-num {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: var(--rust);
+      margin-bottom: 6px;
+    }
+    .cat-name {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      color: var(--chalk);
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+    .cat-count {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: var(--grime);
+    }
+
+    .cat-arrow {
+      position: absolute;
+      top: 20px; right: 20px;
+      width: 36px; height: 36px;
+      border: 1px solid rgba(200,196,187,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+      color: var(--mist);
+      opacity: 0;
+      transform: translate(-4px, 4px);
+      transition: all 0.3s ease;
+    }
+    .cat-card:hover .cat-arrow { opacity: 1; transform: translate(0, 0); }
+
+    /* colors per card */
+    .cat-card:nth-child(1) .cat-bg { background: linear-gradient(135deg, #1a1208, #2e1f08); color: var(--amber); }
+    .cat-card:nth-child(2) .cat-bg { background: linear-gradient(135deg, #0d1520, #1a2535); color: #4fa3e0; }
+    .cat-card:nth-child(3) .cat-bg { background: linear-gradient(135deg, #120d0d, #251515); color: var(--rust); }
+    .cat-card:nth-child(4) .cat-bg { background: linear-gradient(135deg, #0d1a0d, #152815); color: #4caf74; }
+    .cat-card:nth-child(5) .cat-bg { background: linear-gradient(135deg, #16100d, #2a1e14); color: #d4956a; }
+
+    /* ─── FEATURED PRODUCTS ──────────────────────── */
+    .products-section { background: var(--steel); }
+
+    .prod-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .prod-card {
+      background: var(--iron);
+      padding: 32px;
+      position: relative;
+      cursor: none;
+      transition: background 0.25s;
+      overflow: hidden;
+    }
+    .prod-card:hover { background: #35352f; }
+
+    .prod-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 0;
+      background: var(--rust);
+      transition: height 0.35s ease;
+    }
+    .prod-card:hover::before { height: 100%; }
+
+    .prod-img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      background: var(--steel);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .prod-img-inner { transition: transform 0.4s ease; }
+    .prod-card:hover .prod-img-inner { transform: scale(1.05) rotate(-2deg); }
+
+    .prod-badge {
+      position: absolute;
+      top: 12px; right: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 4px 8px;
+      background: var(--rust);
+      color: #fff;
+    }
+
+    .prod-sku {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      color: var(--grime);
+      margin-bottom: 8px;
+    }
+    .prod-name {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      color: var(--chalk);
+      margin-bottom: 6px;
+      line-height: 1.15;
+    }
+    .prod-compat {
+      font-size: 0.78rem;
+      color: var(--mist);
+      margin-bottom: 20px;
+    }
+    .prod-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .prod-price {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      color: var(--chalk);
+    }
+    .prod-price-old {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--grime);
+      text-decoration: line-through;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .btn-cart {
+      width: 42px; height: 42px;
+      background: var(--rust);
+      border: none;
+      color: #fff;
+      font-size: 0.95rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: none;
+      transition: background 0.2s, transform 0.15s;
+      flex-shrink: 0;
+    }
+    .btn-cart:hover { background: var(--highlight); transform: scale(1.08); }
+
+    .prod-stars {
+      display: flex;
+      gap: 2px;
+      margin-bottom: 6px;
+      font-size: 0.7rem;
+      color: var(--amber);
+    }
+
+    /* ─── BRANDS ─────────────────────────────────── */
+    .brands-section { padding: 60px 80px; border-top: 1px solid rgba(200,196,187,0.08); }
+    .brands-label {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--grime);
+      margin-bottom: 32px;
+      text-align: center;
+    }
+    .brands-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+    }
+    .brand-logo {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      color: var(--grime);
+      letter-spacing: 0.06em;
+      transition: color 0.2s;
+      cursor: none;
+      white-space: nowrap;
+    }
+    .brand-logo:hover { color: var(--mist); }
+
+    /* ─── WHY IRONDEPOT ──────────────────────────── */
+    .why-section { background: var(--black); }
+
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+    }
+    .why-card {
+      background: var(--steel);
+      padding: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .why-card:nth-child(odd) { background: var(--iron); }
+
+    .why-icon {
+      font-size: 2rem;
+      margin-bottom: 24px;
+      display: block;
+    }
+    .why-title {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      color: var(--chalk);
+      margin-bottom: 14px;
+    }
+    .why-desc {
+      font-size: 0.9rem;
+      color: var(--mist);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+    .why-num {
+      position: absolute;
+      top: 20px; right: 24px;
+      font-family: var(--font-display);
+      font-size: 4rem;
+      color: rgba(200,196,187,0.05);
+      line-height: 1;
+    }
+
+    /* ─── SEARCH BANNER ──────────────────────────── */
+    .search-section {
+      background: linear-gradient(135deg, var(--rust), #8b3000);
+      padding: 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .search-section::before {
+      content: 'FIND PARTS';
+      position: absolute;
+      font-family: var(--font-display);
+      font-size: 12rem;
+      color: rgba(255,255,255,0.05);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .search-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      color: #fff;
+      margin-bottom: 8px;
+      position: relative;
+    }
+    .search-sub {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 36px;
+      position: relative;
+    }
+    .search-bar {
+      display: flex;
+      max-width: 640px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .search-bar input {
+      flex: 1;
+      padding: 18px 24px;
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-right: none;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      outline: none;
+      backdrop-filter: blur(8px);
+    }
+    .search-bar input::placeholder { color: rgba(255,255,255,0.4); }
+    .search-bar button {
+      padding: 18px 32px;
+      background: var(--black);
+      border: none;
+      color: var(--chalk);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      cursor: none;
+      transition: background 0.2s;
+    }
+    .search-bar button:hover { background: #111; }
+
+    .search-tags {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      position: relative;
+    }
+    .search-tag {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 6px 14px;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.6);
+      cursor: none;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .search-tag:hover { border-color: rgba(255,255,255,0.6); color: #fff; }
+
+    /* ─── TESTIMONIALS ───────────────────────────── */
+    .testimonials-section { background: var(--steel); padding: 100px 80px; }
+    .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+    .testi-card {
+      background: var(--black);
+      padding: 36px;
+    }
+    .testi-quote {
+      font-size: 0.95rem;
+      color: var(--mist);
+      line-height: 1.75;
+      margin-bottom: 28px;
+      font-weight: 300;
+      font-style: italic;
+    }
+    .testi-quote::before { content: '"'; color: var(--rust); font-size: 1.5rem; font-style: normal; font-family: var(--font-display); display: block; margin-bottom: 6px; }
+    .testi-author { display: flex; align-items: center; gap: 14px; }
+    .testi-avatar {
+      width: 40px; height: 40px;
+      background: var(--iron);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-size: 1rem;
+      color: var(--rust);
+      flex-shrink: 0;
+    }
+    .testi-name { font-family: var(--font-mono); font-size: 0.72rem; color: var(--chalk); text-transform: uppercase; letter-spacing: 0.08em; }
+    .testi-role { font-family: var(--font-mono); font-size: 0.6rem; color: var(--grime); margin-top: 2px; }
+
+    /* ─── FOOTER ─────────────────────────────────── */
+    footer {
+      background: var(--black);
+      border-top: 1px solid rgba(200,196,187,0.08);
+      padding: 72px 80px 40px;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 60px;
+    }
+    .footer-brand .logo { display: block; margin-bottom: 16px; font-size: 1.8rem; }
+    .footer-brand p {
+      font-size: 0.85rem;
+      color: var(--grime);
+      line-height: 1.65;
+      font-weight: 300;
+      margin-bottom: 24px;
+    }
+    .footer-social { display: flex; gap: 12px; }
+    .social-btn {
+      width: 34px; height: 34px;
+      border: 1px solid rgba(200,196,187,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem;
+      color: var(--grime);
+      text-decoration: none;
+      cursor: none;
+      transition: all 0.2s;
+    }
+    .social-btn:hover { border-color: var(--rust); color: var(--rust); }
+
+    .footer-col h4 {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--mist);
+      margin-bottom: 20px;
+    }
+    .footer-col a {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--grime);
+      text-decoration: none;
+      margin-bottom: 10px;
+      font-weight: 300;
+      transition: color 0.2s;
+    }
+    .footer-col a:hover { color: var(--chalk); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 32px;
+      border-top: 1px solid rgba(200,196,187,0.06);
+    }
+    .footer-copy {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: var(--grime);
+      letter-spacing: 0.06em;
+    }
+    .footer-payments { display: flex; gap: 10px; align-items: center; }
+    .pay-badge {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.08em;
+      color: var(--grime);
+      border: 1px solid rgba(200,196,187,0.12);
+      padding: 4px 8px;
+      text-transform: uppercase;
+    }
+
+    /* ─── ANIMATIONS ─────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ─── RESPONSIVE ─────────────────────────────── */
+    @media (max-width: 1024px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-right { display: none; }
+      .hero-left { padding: 60px 40px; }
+      .cat-grid { grid-template-columns: repeat(2, 1fr); }
+      .cat-card:first-child { grid-row: span 1; }
+      .prod-grid { grid-template-columns: repeat(2, 1fr); }
+      section { padding: 70px 40px; }
+      footer { padding: 60px 40px 32px; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
+      header { padding: 16px 32px; }
+      nav { display: none; }
+    }
+
+    @media (max-width: 680px) {
+      .hero-title { font-size: 3.8rem; }
+      .cat-grid, .prod-grid, .why-grid, .testi-grid { grid-template-columns: 1fr; }
+      .brands-row { flex-wrap: wrap; justify-content: center; }
+      .footer-top { grid-template-columns: 1fr; }
+      .search-section, .brands-section, section { padding: 60px 24px; }
+      footer { padding: 60px 24px 32px; }
+      header { padding: 14px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- ═══ HEADER ═══════════════════════════════════ -->
+  <header>
+    <a href="#" class="logo">IRON<span>DEPOT</span></a>
+    <nav>
+      <a href="#">Catalog</a>
+      <a href="#">By Brand</a>
+      <a href="#">By Machine</a>
+      <a href="#">Hydraulics</a>
+      <a href="#">Undercarriage</a>
+      <a href="#">About</a>
+    </nav>
+    <div class="header-actions">
+      <button class="btn-icon" title="Search">🔍</button>
+      <button class="btn-icon" title="Account">👤</button>
+      <button class="btn-icon" title="Cart" style="position:relative">
+        🛒
+        <span class="cart-badge">3</span>
+      </button>
+      <button class="btn-primary">Get Quote</button>
+    </div>
+  </header>
+
+  <!-- ═══ HERO ══════════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-bg-glow"></div>
+
+    <div class="hero-left">
+      <div class="hero-tag">OEM &amp; Aftermarket Parts</div>
+      <h1 class="hero-title">
+        BUILT<br>
+        FOR<br>
+        <span class="accent">HEAVY</span>
+        IRON
+      </h1>
+      <p class="hero-sub">
+        Source genuine and aftermarket excavator parts — from undercarriage to hydraulics — shipped worldwide in 24 hours.
+      </p>
+      <div class="hero-cta">
+        <button class="btn-primary" style="padding:14px 36px;font-size:0.78rem;">Shop Now</button>
+        <a href="#" class="btn-outline">Browse Catalog</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-num">40<span>K+</span></div>
+          <div class="stat-label">Part Numbers</div>
+        </div>
+        <div>
+          <div class="stat-num">150<span>+</span></div>
+          <div class="stat-label">Brands Covered</div>
+        </div>
+        <div>
+          <div class="stat-num">24<span>hr</span></div>
+          <div class="stat-label">Dispatch Time</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="hero-visual">
+        <div class="hero-svg-wrap">
+          <!-- Large SVG Excavator Illustration -->
+          <svg viewBox="0 0 520 420" width="90%" height="90%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="bodyGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#3a3a36"/>
+                <stop offset="100%" stop-color="#1c1c1a"/>
+              </linearGradient>
+              <linearGradient id="armGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#2e2e2b"/>
+                <stop offset="100%" stop-color="#1a1a18"/>
+              </linearGradient>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="3" result="blur"/>
+                <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+              </filter>
+            </defs>
+
+            <!-- Ground -->
+            <rect x="0" y="360" width="520" height="60" fill="#141412"/>
+            <rect x="0" y="358" width="520" height="4" fill="#222220"/>
+
+            <!-- Undercarriage / Tracks -->
+            <rect x="60" y="310" width="320" height="52" rx="26" fill="#252523"/>
+            <rect x="70" y="318" width="300" height="36" rx="18" fill="#1a1a18"/>
+            <!-- Track details -->
+            <rect x="80" y="320" width="28" height="32" rx="4" fill="#2a2a28" stroke="#333330" stroke-width="1"/>
+            <rect x="116" y="320" width="28" height="32" rx="4" fill="#2a2a28" stroke="#333330" stroke-width="1"/>
+            <rect x="152" y="320" width="28" height="32" rx="4" fill="#2a2a28" stroke="#333330" stroke-width="1"/>
+            <rect x="188" y="320" width="28" height="32" rx="4" fill="#2a2a28" stroke="#333330" stroke-width="1"/>
+            <rect x="224" y="320" width="28" height="32" rx="4" fill="#2a2a28" stroke="#333330" stroke-width="1"/>
+            <rect x="260" y="320" width="28" height="32" rx="4" fill="#2a2a28" stroke="#333330" stroke-width="1"/>
+            <rect x="296" y="320" width="28" height="32" rx="4" fill="#2a2a28" stroke="#333330" stroke-width="1"/>
+            <rect x="332" y="320" width="28" height="32" rx="4" fill="#2a2a28" stroke="#333330" stroke-width="1"/>
+            <!-- Drive sprockets -->
+            <circle cx="86" cy="336" r="18" fill="#333330" stroke="#444440" stroke-width="2"/>
+            <circle cx="86" cy="336" r="10" fill="#252523"/>
+            <circle cx="354" cy="336" r="18" fill="#333330" stroke="#444440" stroke-width="2"/>
+            <circle cx="354" cy="336" r="10" fill="#252523"/>
+
+            <!-- Main Body/House -->
+            <rect x="100" y="230" width="260" height="90" rx="6" fill="url(#bodyGrad)" stroke="#3a3a36" stroke-width="1.5"/>
+            <!-- Body detail line -->
+            <rect x="100" y="270" width="260" height="2" fill="#111110" opacity="0.5"/>
+
+            <!-- Cab -->
+            <rect x="200" y="165" width="140" height="80" rx="5" fill="#2a2a28" stroke="#3a3a36" stroke-width="1.5"/>
+            <!-- Cab windows -->
+            <rect x="210" y="173" width="50" height="38" rx="3" fill="#1a2535" opacity="0.8" stroke="#2a3a50" stroke-width="1"/>
+            <rect x="270" y="173" width="60" height="38" rx="3" fill="#1a2535" opacity="0.8" stroke="#2a3a50" stroke-width="1"/>
+            <!-- Window reflection -->
+            <line x1="212" y1="175" x2="230" y2="195" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+            <line x1="272" y1="175" x2="295" y2="198" stroke="rgba(255,255,255,0.06)" stroke-width="2"/>
+
+            <!-- Engine cover / back -->
+            <rect x="100" y="200" width="100" height="36" rx="4" fill="#262624" stroke="#3a3a36" stroke-width="1"/>
+            <rect x="110" y="208" width="20" height="20" rx="2" fill="#1a1a18"/>
+            <rect x="138" y="208" width="20" height="20" rx="2" fill="#1a1a18"/>
+            <rect x="166" y="208" width="20" height="20" rx="2" fill="#1a1a18"/>
+
+            <!-- Boom arm (upper) -->
+            <rect x="130" y="200" width="200" height="24" rx="8" fill="url(#armGrad)" stroke="#3a3a36" stroke-width="1.5"
+              transform="rotate(-30, 130, 212)"/>
+            <!-- Stick (lower arm) -->
+            <rect x="200" y="110" width="160" height="18" rx="7" fill="url(#armGrad)" stroke="#3a3a36" stroke-width="1.5"
+              transform="rotate(15, 200, 119)"/>
+
+            <!-- Hydraulic cylinders -->
+            <line x1="150" y1="235" x2="195" y2="165" stroke="#444440" stroke-width="6" stroke-linecap="round"/>
+            <line x1="152" y1="233" x2="197" y2="163" stroke="#3a3a36" stroke-width="3" stroke-linecap="round"/>
+
+            <line x1="220" y1="180" x2="285" y2="130" stroke="#444440" stroke-width="5" stroke-linecap="round"/>
+            <line x1="222" y1="178" x2="287" y2="128" stroke="#3a3a36" stroke-width="2.5" stroke-linecap="round"/>
+
+            <!-- Bucket -->
+            <path d="M340 90 L370 70 L400 80 L410 110 L380 130 L350 120 Z"
+              fill="#252523" stroke="#3a3a36" stroke-width="1.5"/>
+            <!-- Bucket teeth -->
+            <path d="M370 128 L365 145 L375 145 Z" fill="#444440"/>
+            <path d="M385 125 L382 143 L392 141 Z" fill="#444440"/>
+            <path d="M355 122 L348 138 L358 140 Z" fill="#444440"/>
+
+            <!-- Accent lights -->
+            <circle cx="340" cy="172" r="5" fill="#f5a623" filter="url(#glow)" opacity="0.9"/>
+            <circle cx="336" cy="172" r="2" fill="#fff"/>
+            <circle cx="202" cy="168" r="4" fill="#c94a00" filter="url(#glow)" opacity="0.8"/>
+
+            <!-- Brand decal area -->
+            <rect x="110" y="248" width="80" height="16" rx="2" fill="#1a1a18" opacity="0.6"/>
+            <text x="150" y="260" text-anchor="middle" font-family="'Bebas Neue', sans-serif" font-size="11" fill="#c94a00" opacity="0.8">IRONDEPOT</text>
+          </svg>
+        </div>
+        <div class="hero-overlay-text">EX</div>
+        <div class="badge-floating">
+          <span class="big">OEM</span>
+          <span class="small">Certified Parts</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TICKER ════════════════════════════════════ -->
+  <div class="ticker">
+    <div class="ticker-inner">
+      <span>Komatsu PC200</span>
+      <span>Caterpillar 320</span>
+      <span>Hitachi ZX200</span>
+      <span>Volvo EC220</span>
+      <span>Doosan DX225</span>
+      <span>Hyundai HX235</span>
+      <span>Liebherr R920</span>
+      <span>Kobelco SK200</span>
+      <span>JCB JS205</span>
+      <span>Komatsu PC200</span>
+      <span>Caterpillar 320</span>
+      <span>Hitachi ZX200</span>
+      <span>Volvo EC220</span>
+      <span>Doosan DX225</span>
+      <span>Hyundai HX235</span>
+      <span>Liebherr R920</span>
+      <span>Kobelco SK200</span>
+      <span>JCB JS205</span>
+    </div>
+  </div>
+
+  <!-- ═══ CATEGORIES ════════════════════════════════ -->
+  <section class="reveal">
+    <div class="section-header">
+      <div>
+        <div class="section-eyebrow">Browse by Type</div>
+        <h2 class="section-title">PART<br>CATEGORIES</h2>
+      </div>
+      <a href="#" class="section-link">View all categories →</a>
+    </div>
+    <div class="cat-grid">
+      <div class="cat-card">
+        <div class="cat-bg">⛓</div>
+        <div class="cat-noise"></div>
+        <div class="cat-arrow">↗</div>
+        <div class="cat-content">
+          <div class="cat-num">CAT — 01</div>
+          <div class="cat-name">Undercarriage Components</div>
+          <div class="cat-count">2,840 parts available</div>
+        </div>
+      </div>
+      <div class="cat-card">
+        <div class="cat-bg">💧</div>
+        <div class="cat-noise"></div>
+        <div class="cat-arrow">↗</div>
+        <div class="cat-content">
+          <div class="cat-num">CAT — 02</div>
+          <div class="cat-name">Hydraulic Systems</div>
+          <div class="cat-count">3,120 parts available</div>
+        </div>
+      </div>
+      <div class="cat-card">
+        <div class="cat-bg">⚙</div>
+        <div class="cat-noise"></div>
+        <div class="cat-arrow">↗</div>
+        <div class="cat-content">
+          <div class="cat-num">CAT — 03</div>
+          <div class="cat-name">Engine &amp; Powertrain</div>
+          <div class="cat-count">4,580 parts available</div>
+        </div>
+      </div>
+      <div class="cat-card">
+        <div class="cat-bg">🔩</div>
+        <div class="cat-noise"></div>
+        <div class="cat-arrow">↗</div>
+        <div class="cat-content">
+          <div class="cat-num">CAT — 04</div>
+          <div class="cat-name">Structural & Pins</div>
+          <div class="cat-count">1,960 parts available</div>
+        </div>
+      </div>
+      <div class="cat-card">
+        <div class="cat-bg">🪛</div>
+        <div class="cat-noise"></div>
+        <div class="cat-arrow">↗</div>
+        <div class="cat-content">
+          <div class="cat-num">CAT — 05</div>
+          <div class="cat-name">Filters &amp; Seals</div>
+          <div class="cat-count">5,210 parts available</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FEATURED PRODUCTS ═════════════════════════ -->
+  <section class="products-section reveal">
+    <div class="section-header">
+      <div>
+        <div class="section-eyebrow">In Stock &amp; Ready to Ship</div>
+        <h2 class="section-title">FEATURED<br>PARTS</h2>
+      </div>
+      <a href="#" class="section-link">View all products →</a>
+    </div>
+    <div class="prod-grid">
+
+      <div class="prod-card">
+        <div class="prod-img">
+          <div class="prod-img-inner">⛓</div>
+          <span class="prod-badge">OEM</span>
+        </div>
+        <div class="prod-stars">★★★★★</div>
+        <div class="prod-sku">SKU: KOM-PC200-TRK-01</div>
+        <div class="prod-name">Track Chain Assembly — PC200</div>
+        <div class="prod-compat">Fits: Komatsu PC200-8 / PC210</div>
+        <div class="prod-footer">
+          <div>
+            <span class="prod-price-old">$1,840.00</span>
+            <span class="prod-price">$1,490</span>
+          </div>
+          <button class="btn-cart">+</button>
+        </div>
+      </div>
+
+      <div class="prod-card">
+        <div class="prod-img">
+          <div class="prod-img-inner">💧</div>
+          <span class="prod-badge" style="background:var(--amber);color:#000;">HOT</span>
+        </div>
+        <div class="prod-stars">★★★★☆</div>
+        <div class="prod-sku">SKU: CAT-320-PUMP-HYD</div>
+        <div class="prod-name">Main Hydraulic Pump Assy</div>
+        <div class="prod-compat">Fits: Caterpillar 320D / 320E</div>
+        <div class="prod-footer">
+          <div>
+            <span class="prod-price-old">$3,200.00</span>
+            <span class="prod-price">$2,750</span>
+          </div>
+          <button class="btn-cart">+</button>
+        </div>
+      </div>
+
+      <div class="prod-card">
+        <div class="prod-img">
+          <div class="prod-img-inner">🦷</div>
+        </div>
+        <div class="prod-stars">★★★★★</div>
+        <div class="prod-sku">SKU: HIT-ZX200-BCK-TH</div>
+        <div class="prod-name">Bucket Tooth Set (6 pcs)</div>
+        <div class="prod-compat">Fits: Hitachi ZX200 / ZX210</div>
+        <div class="prod-footer">
+          <div>
+            <span class="prod-price-old">$320.00</span>
+            <span class="prod-price">$248</span>
+          </div>
+          <button class="btn-cart">+</button>
+        </div>
+      </div>
+
+      <div class="prod-card">
+        <div class="prod-img">
+          <div class="prod-img-inner">🔧</div>
+        </div>
+        <div class="prod-stars">★★★★☆</div>
+        <div class="prod-sku">SKU: VOL-EC220-CYL-BO</div>
+        <div class="prod-name">Boom Cylinder w/ Seals</div>
+        <div class="prod-compat">Fits: Volvo EC220E / EC250</div>
+        <div class="prod-footer">
+          <div>
+            <span class="prod-price">$1,080</span>
+          </div>
+          <button class="btn-cart">+</button>
+        </div>
+      </div>
+
+      <div class="prod-card">
+        <div class="prod-img">
+          <div class="prod-img-inner">🛞</div>
+          <span class="prod-badge">NEW</span>
+        </div>
+        <div class="prod-stars">★★★★★</div>
+        <div class="prod-sku">SKU: KOM-PC300-IDF-FW</div>
+        <div class="prod-name">Front Idler &amp; Carrier Roller</div>
+        <div class="prod-compat">Fits: Komatsu PC300-8</div>
+        <div class="prod-footer">
+          <div>
+            <span class="prod-price-old">$780.00</span>
+            <span class="prod-price">$620</span>
+          </div>
+          <button class="btn-cart">+</button>
+        </div>
+      </div>
+
+      <div class="prod-card">
+        <div class="prod-img">
+          <div class="prod-img-inner">🔋</div>
+        </div>
+        <div class="prod-stars">★★★☆☆</div>
+        <div class="prod-sku">SKU: DOO-DX225-SWG-MTR</div>
+        <div class="prod-name">Swing Motor with Gearbox</div>
+        <div class="prod-compat">Fits: Doosan DX225 / DX255</div>
+        <div class="prod-footer">
+          <div>
+            <span class="prod-price">$3,450</span>
+          </div>
+          <button class="btn-cart">+</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ BRANDS ════════════════════════════════════ -->
+  <div class="brands-section reveal">
+    <div class="brands-label">Genuine parts for all major excavator brands</div>
+    <div class="brands-row">
+      <div class="brand-logo">KOMATSU</div>
+      <div class="brand-logo">CATERPILLAR</div>
+      <div class="brand-logo">HITACHI</div>
+      <div class="brand-logo">VOLVO CE</div>
+      <div class="brand-logo">DOOSAN</div>
+      <div class="brand-logo">HYUNDAI</div>
+      <div class="brand-logo">LIEBHERR</div>
+      <div class="brand-logo">KOBELCO</div>
+    </div>
+  </div>
+
+  <!-- ═══ SEARCH SECTION ════════════════════════════ -->
+  <div class="search-section">
+    <h2 class="search-title">FIND YOUR PART</h2>
+    <p class="search-sub">Enter a part number, machine model, or component name to search 40,000+ parts</p>
+    <div class="search-bar">
+      <input type="text" placeholder="e.g.  PC200-8 track chain  or  KOM-PC200-TRK-01" />
+      <button>Search →</button>
+    </div>
+    <div class="search-tags">
+      <a href="#" class="search-tag">Undercarriage</a>
+      <a href="#" class="search-tag">Hydraulic Pumps</a>
+      <a href="#" class="search-tag">Engine Filters</a>
+      <a href="#" class="search-tag">Bucket Teeth</a>
+      <a href="#" class="search-tag">Swing Motors</a>
+      <a href="#" class="search-tag">Boom Cylinders</a>
+    </div>
+  </div>
+
+  <!-- ═══ WHY IRONDEPOT ══════════════════════════════ -->
+  <section class="why-section reveal">
+    <div class="section-header">
+      <div>
+        <div class="section-eyebrow">Why Choose Us</div>
+        <h2 class="section-title">THE IRONDEPOT<br>DIFFERENCE</h2>
+      </div>
+    </div>
+    <div class="why-grid">
+      <div class="why-card">
+        <span class="why-icon">🚚</span>
+        <div class="why-num">01</div>
+        <div class="why-title">24-Hour Dispatch</div>
+        <p class="why-desc">Orders placed before 3PM ship the same day. We partner with freight carriers across 80+ countries to keep your machine running.</p>
+      </div>
+      <div class="why-card">
+        <span class="why-icon">✅</span>
+        <div class="why-num">02</div>
+        <div class="why-title">Genuine OEM &amp; Certified Aftermarket</div>
+        <p class="why-desc">Every part ships with a certificate of conformance. We stock original manufacturer parts alongside ISO-certified aftermarket alternatives.</p>
+      </div>
+      <div class="why-card">
+        <span class="why-icon">🔍</span>
+        <div class="why-num">03</div>
+        <div class="why-title">Expert Parts Matching</div>
+        <p class="why-desc">Our engineers cross-reference by serial number, model year, and application. Not sure of the exact part? Call us — we'll find it.</p>
+      </div>
+      <div class="why-card">
+        <span class="why-icon">🛡️</span>
+        <div class="why-num">04</div>
+        <div class="why-title">12-Month Warranty</div>
+        <p class="why-desc">All parts carry a full 12-month warranty against manufacturing defects. Hassle-free returns and replacements, no questions asked.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TESTIMONIALS ══════════════════════════════ -->
+  <section class="testimonials-section reveal">
+    <div class="section-header">
+      <div>
+        <div class="section-eyebrow">From the Field</div>
+        <h2 class="section-title">WHAT OPERATORS<br>ARE SAYING</h2>
+      </div>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <p class="testi-quote">The track chain for our Komatsu PC300 arrived in two days and fit perfectly. No machine downtime, no guessing — that's what we need on site.</p>
+        <div class="testi-author">
+          <div class="testi-avatar">RK</div>
+          <div>
+            <div class="testi-name">Rajiv Kumar</div>
+            <div class="testi-role">Site Manager, DLF Infrastructure</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <p class="testi-quote">I've ordered hydraulic pumps from 4 different suppliers. IronDepot is the only one where the specs matched, the price was fair, and delivery was on time.</p>
+        <div class="testi-author">
+          <div class="testi-avatar">MO</div>
+          <div>
+            <div class="testi-name">Mike O'Brien</div>
+            <div class="testi-role">Fleet Owner, O'Brien Plant Hire</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <p class="testi-quote">Their parts matching team saved us hours of research. We sent the serial number and they had the right swing motor shipped the same afternoon.</p>
+        <div class="testi-author">
+          <div class="testi-avatar">SF</div>
+          <div>
+            <div class="testi-name">Sara Ferreira</div>
+            <div class="testi-role">Operations Director, Ferros Construção</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ════════════════════════════════════ -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#" class="logo">IRON<span>DEPOT</span></a>
+        <p>The world's most reliable source for excavator parts and heavy equipment components. OEM quality. Expert support. Worldwide delivery.</p>
+        <div class="footer-social">
+          <a href="#" class="social-btn">in</a>
+          <a href="#" class="social-btn">yt</a>
+          <a href="#" class="social-btn">𝕏</a>
+          <a href="#" class="social-btn">fb</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Products</h4>
+        <a href="#">Undercarriage</a>
+        <a href="#">Hydraulics</a>
+        <a href="#">Engine Parts</a>
+        <a href="#">Cab &amp; Controls</a>
+        <a href="#">Attachments</a>
+        <a href="#">Filters &amp; Seals</a>
+      </div>
+      <div class="footer-col">
+        <h4>Machines</h4>
+        <a href="#">Komatsu</a>
+        <a href="#">Caterpillar</a>
+        <a href="#">Hitachi</a>
+        <a href="#">Volvo</a>
+        <a href="#">Doosan</a>
+        <a href="#">All Brands</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="#">About Us</a>
+        <a href="#">Warranty Policy</a>
+        <a href="#">Returns</a>
+        <a href="#">Trade Accounts</a>
+        <a href="#">Contact</a>
+        <a href="#">Blog</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 IronDepot Ltd. All rights reserved.</div>
+      <div class="footer-payments">
+        <span class="pay-badge">Visa</span>
+        <span class="pay-badge">Mastercard</span>
+        <span class="pay-badge">PayPal</span>
+        <span class="pay-badge">Wire</span>
+        <span class="pay-badge">PO</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══ SCRIPTS ══════════════════════════════════ -->
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+    });
+
+    function animateRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = (rx - 18) + 'px';
+      ring.style.top = (ry - 18) + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    cursor.style.transform = 'translate(-50%, -50%)';
+
+    // Hover effect on interactive elements
+    document.querySelectorAll('a, button, .cat-card, .prod-card').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.width = '20px';
+        cursor.style.height = '20px';
+        ring.style.width = '50px';
+        ring.style.height = '50px';
+        ring.style.marginLeft = '-7px';
+        ring.style.marginTop = '-7px';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.width = '12px';
+        cursor.style.height = '12px';
+        ring.style.width = '36px';
+        ring.style.height = '36px';
+        ring.style.marginLeft = '0';
+        ring.style.marginTop = '0';
+      });
+    });
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    reveals.forEach(el => obs.observe(el));
+
+    // Add to cart micro-interaction
+    document.querySelectorAll('.btn-cart').forEach(btn => {
+      btn.addEventListener('click', function() {
+        this.textContent = '✓';
+        this.style.background = '#2e7d32';
+        setTimeout(() => {
+          this.textContent = '+';
+          this.style.background = '';
+        }, 1200);
+        const badge = document.querySelector('.cart-badge');
+        if (badge) badge.textContent = parseInt(badge.textContent) + 1;
+      });
+    });
+
+    // Hero text stagger on load
+    const heroEls = document.querySelectorAll('.hero-tag, .hero-title, .hero-sub, .hero-cta, .hero-stats');
+    heroEls.forEach((el, i) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(24px)';
+      el.style.transition = `opacity 0.7s ease ${i * 0.12}s, transform 0.7s ease ${i * 0.12}s`;
+      setTimeout(() => {
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      }, 200 + i * 120);
+    });
+  </script>
+</body>
+</html>
